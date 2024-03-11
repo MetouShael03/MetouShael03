@@ -1,0 +1,113 @@
+Ai ajouté une clé api à ce code
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bot Facebook</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+background-color: #f4f4f4;
+margin: 20px;
+}
+h1 {
+color: #333;
+}
+form {
+max-width: 400px;
+margin: 20px auto;
+padding: 20px;
+background-color: #fff;
+border-radius: 8px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+label {
+display: block;
+margin-bottom: 8px;
+color: #555;
+}
+input {
+width: 100%;
+padding: 8px;
+margin-bottom: 16px;
+box-sizing: border-box;
+}
+button {
+background-color: #4caf50;
+color: #fff;
+padding: 10px 15px;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+}
+button:hover {
+background-color: #45a049;
+}
+</style>
+</head>
+<body>
+<h1>Démarrer le Bot Facebook</h1>
+<form id="botForm">
+<label for="cookie">Cookie du compte Facebook :</label>
+<input type="text" id="cookie" name="cookie" required>
+<label for="nom">Nom du Bot :</label>
+<input type="text" id="nom" name="nom" required>
+<label for="prefix">Prefixe du Bot :</label>
+<input type="text" id="prefix" name="prefix" required>
+<br>
+<button type="submit">Créer le Bot</button>
+</form>
+<script>
+// Envoi des données au serveur pour démarrer le bot
+
+
+async function demarrerBot(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    const cookie = formData.get('cookie');
+
+    try {
+        const response = await fetch('/demarrer-bot', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cookie })
+        });
+
+        if (response.ok) {
+            alert('Bot activé');
+
+            const question = prompt('Posez votre question :');
+
+            const openaiResponse = await fetch('https://api.openai.com/v1/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer VOTRE_CLE_API_OPENAI'
+                },
+                body: JSON.stringify({
+                    prompt: question,
+                    max_tokens: 50
+                })
+            });
+
+            const openaiData = await openaiResponse.json();
+            alert('Réponse du bot : ' + openaiData.choices[0].text.trim());
+        } else {
+            alert('Erreur pendant le démarrage du bot');
+        }
+    } catch (error) {
+        console.error('Erreur lors du démarrage du bot :', error);
+        alert('Erreur lors du démarrage du bot');
+    }
+}
+
+document.getElementById('botForm').addEventListener('submit', demarrerBot);
+</script>
+
+</body>
+</html>
